@@ -12,7 +12,7 @@ import { api } from "../../lib/api";
 
 const Party = () => {
   const { id } = useParams({ from: "/party/$id" });
-  const { name } = useSearch({ from: "/party/$id" });
+  const { name } = useSearch({ from: "/party/$id" }) as { name: string };
 
   const [rank, setRank] = useState<number | null>(null);
 
@@ -44,6 +44,10 @@ const Party = () => {
         param: { id },
         json: { name },
       });
+
+      if (!response.ok) {
+        throw new Error("Failed to buzz");
+      }
 
       return await response.json();
     },
@@ -152,7 +156,11 @@ export const Route = createFileRoute("/party/$id")({
     const { players } = await exists.json();
 
     // Check if the player is in the party based on the name
-    if (c.search && c.search.name && players.includes(c.search.name)) {
+    if (
+      c.search &&
+      (c.search as { name?: string }).name &&
+      players.includes((c.search as { name: string }).name)
+    ) {
       return;
     }
 

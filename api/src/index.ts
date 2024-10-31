@@ -137,7 +137,7 @@ const app = new Hono()
   });
 
 // Clean up the parties every 15 minutes if they are older than 1 hour
-const cleanup = setInterval(() => {
+setInterval(() => {
   const now = Date.now();
 
   for (const id in parties) {
