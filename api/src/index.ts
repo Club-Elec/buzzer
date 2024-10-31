@@ -107,6 +107,11 @@ const app = new Hono()
         return c.json({ error: "Party not found" }, 404);
       }
 
+      // Check if the player has already submitted
+      if (parties[id].submitted.includes(name)) {
+        return c.json({ error: "Player already submitted" }, 400);
+      }
+
       // Add the player to the submitted list
       parties[id].submitted.push(name);
 
