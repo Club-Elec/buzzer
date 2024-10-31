@@ -61,7 +61,6 @@ const Party = () => {
     // Buzz the party
     await buzz(undefined, {
       onSuccess: (data) => setRank(data.rank),
-      onError: () => setRank(null),
     });
   }, [buzz]);
 
