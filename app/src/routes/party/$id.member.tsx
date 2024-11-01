@@ -77,7 +77,7 @@ const Party = () => {
 
   return (
     <div className="w-full h-full flex items-center justify-center p-4">
-      <div className="h-3/4 flex flex-col items-center justify-between gap-4">
+      <div className="h-full flex flex-col items-center justify-between gap-4">
         <h1 className="text-5xl text-red-950 font-bold">Buzz Ta Mère</h1>
 
         <div className="w-96 aspect-square flex items-center justify-center rounded-full border-red-400 bg-red-100">
@@ -88,22 +88,22 @@ const Party = () => {
           />
         </div>
 
-        <div className="flex flex-col items-center gap-4">
-          <button className="w-fit h-16 flex items-center px-4 py-2 border border-red-200 bg-red-50 rounded-2xl shadow-md shadow-red-100 text-lg font-semibold active:scale-95 transition ease-in-out duration-300">
+        <div className="w-[80%] flex flex-col items-center gap-2">
+          <button className="w-full h-16 flex items-center px-4 py-2 border border-red-200 bg-red-50 rounded-2xl shadow-md shadow-red-100 text-lg font-semibold active:scale-95 transition ease-in-out duration-300">
             Vous êtes &nbsp;
             <span className="font-bold">{name}</span>&nbsp;!
           </button>
 
-          <div className="flex gap-2">
-            <button
-              className="w-fit h-16 flex items-center px-4 py-2 border border-red-400 bg-red-100 rounded-2xl shadow-xl shadow-red-200 text-lg font-semibold active:scale-95 transition ease-in-out duration-300"
-              onClick={onShare}
-            >
+          <button
+            className="w-full h-16 flex justify-between items-center px-4 py-2 border border-red-400 bg-red-100 rounded-2xl shadow-xl shadow-red-200 text-lg font-semibold active:scale-95 transition ease-in-out duration-300"
+            onClick={onShare}
+          >
+            <div className="flex items-center">
               Rejoindre avec&nbsp;
               <span className="font-bold">{id}</span>
-              <Share2 className="text-red-600 ml-3" />
-            </button>
-          </div>
+            </div>
+            <Share2 className="text-red-600 ml-3" />
+          </button>
 
           {rank ? (
             <p className="text-sm text-center mt-2">
