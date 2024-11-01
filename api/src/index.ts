@@ -76,6 +76,11 @@ const app = new Hono()
       return c.json({ error: "Party not found" }, 404);
     }
 
+    // Make sure the party is not full
+    if (parties[id].players.length >= names.length) {
+      return c.json({ error: "Party is full" }, 400);
+    }
+
     // Pick a random name
     let name = names[Math.floor(Math.random() * names.length)];
     while (parties[id].players.includes(name)) {
