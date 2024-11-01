@@ -107,9 +107,9 @@ const Party = () => {
   return (
     <div className="w-full h-full flex items-center justify-center p-4">
       <div className="h-full flex flex-col items-center justify-between gap-4">
-        <h1 className="text-5xl text-red-950 font-bold">Buzz Ta Mère</h1>
+        <h1 className="text-5xl text-blue-950 font-bold">Buzz Ta Mère</h1>
 
-        <div className="w-96 aspect-square flex items-center justify-center rounded-full border-red-400 bg-red-100">
+        <div className="w-96 aspect-square flex items-center justify-center rounded-full border-blue-400 bg-blue-100">
           <img
             src="/skins/bud_button.png"
             className="w-full h-full active:scale-90 transition ease-in-out duration-300"
@@ -118,20 +118,20 @@ const Party = () => {
         </div>
 
         <div className="w-[80%] flex flex-col items-center gap-2">
-          <button className="w-full h-16 flex items-center px-4 py-2 border border-red-200 bg-red-50 rounded-2xl shadow-md shadow-red-100 text-lg font-semibold active:scale-95 transition ease-in-out duration-300">
+          <button className="w-full h-16 flex items-center px-4 py-2 border border-blue-200 bg-blue-50 rounded-2xl shadow-md shadow-blue-100 text-lg font-semibold active:scale-95 transition ease-in-out duration-300">
             Vous êtes &nbsp;
             <span className="font-bold">{name}</span>&nbsp;!
           </button>
 
           <button
-            className="w-full h-16 flex justify-between items-center px-4 py-2 border border-red-400 bg-red-100 rounded-2xl shadow-xl shadow-red-200 text-lg font-semibold active:scale-95 transition ease-in-out duration-300"
+            className="w-full h-16 flex justify-between items-center px-4 py-2 border border-blue-400 bg-blue-100 rounded-2xl shadow-xl shadow-blue-200 text-lg font-semibold active:scale-95 transition ease-in-out duration-300"
             onClick={onShare}
           >
             <div className="flex items-center">
               Rejoindre avec&nbsp;
               <span className="font-bold">{id}</span>
             </div>
-            <Share2 className="text-red-600 ml-3" />
+            <Share2 className="text-blue-600 ml-3" />
           </button>
 
           {rank ? (

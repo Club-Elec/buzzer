@@ -82,7 +82,7 @@ const PartyOwner = () => {
   return (
     <div className="w-full h-full flex items-center justify-center p-4">
       <div className="h-full flex flex-col items-center justify-between gap-4">
-        <h1 className="text-5xl text-red-950 font-bold">Buzz Ta Mère</h1>
+        <h1 className="text-5xl text-blue-950 font-bold">Buzz Ta Mère</h1>
 
         <div className="relative w-[90%] h-full flex flex-col overflow-y-hidden">
           <div className="absolute -top-1 left-0 w-full h-8 bg-gradient-to-b from-white to-transparent" />
@@ -97,7 +97,7 @@ const PartyOwner = () => {
                 return (
                   <div
                     key={name}
-                    className="w-full h-16 flex items-center justify-between px-4 py-2 border border-red-400 bg-red-100 rounded-2xl shadow-xl shadow-red-200 text-lg font-semibold"
+                    className="w-full h-16 flex items-center justify-between px-4 py-2 border border-blue-400 bg-blue-100 rounded-2xl shadow-xl shadow-blue-200 text-lg font-semibold"
                   >
                     <p>{name}</p>
 
@@ -108,7 +108,7 @@ const PartyOwner = () => {
                 );
               })
             ) : (
-              <div className="w-full h-16 flex items-center justify-between px-4 py-2 border border-red-400 bg-red-100 rounded-2xl shadow-xl shadow-red-200 text-lg font-semibold">
+              <div className="w-full h-16 flex items-center justify-between px-4 py-2 border border-blue-400 bg-blue-100 rounded-2xl shadow-xl shadow-blue-200 text-lg font-semibold">
                 <p>Aucun joueur...</p>
               </div>
             )}
@@ -121,20 +121,20 @@ const PartyOwner = () => {
 
         <div className="w-[90%] flex flex-col items-center gap-4">
           <button
-            className="w-full h-16 flex items-center justify-between px-4 py-2 border border-red-400 bg-red-100 rounded-2xl shadow-xl shadow-red-200 text-lg font-semibold active:scale-95 transition ease-in-out duration-300"
+            className="w-full h-16 flex items-center justify-between px-4 py-2 border border-blue-400 bg-blue-100 rounded-2xl shadow-xl shadow-blue-200 text-lg font-semibold active:scale-95 transition ease-in-out duration-300"
             onClick={onReset}
           >
             Manche suivante
-            <RotateCcw className="text-red-600 ml-4" />
+            <RotateCcw className="text-blue-600 ml-4" />
           </button>
 
           <button
-            className="w-full h-16 flex items-center justify-between px-4 py-2 border border-red-400 bg-red-100 rounded-2xl shadow-xl shadow-red-200 text-lg font-semibold active:scale-95 transition ease-in-out duration-300"
+            className="w-full h-16 flex items-center justify-between px-4 py-2 border border-blue-400 bg-blue-100 rounded-2xl shadow-xl shadow-blue-200 text-lg font-semibold active:scale-95 transition ease-in-out duration-300"
             onClick={onShare}
           >
             Rejoindre avec&nbsp;
             <span className="font-bold">{id}</span>
-            <Share2 className="text-red-600 ml-4" />
+            <Share2 className="text-blue-600 ml-4" />
           </button>
         </div>
       </div>
