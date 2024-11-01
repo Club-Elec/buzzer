@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { RotateCcw, Share2 } from "lucide-react";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { api } from "../../lib/api";
 
 const PartyOwner = () => {
@@ -47,6 +47,38 @@ const PartyOwner = () => {
     [id]
   );
 
+  const ranks = useMemo<string[]>(() => {
+    if (!party) {
+      return [];
+    }
+
+    const players = party.players;
+
+    if (party.submitted.length === 0) {
+      return players;
+    }
+
+    const submitted = party.submitted;
+
+    // Sort the players by the order they submitted, then by their name
+    const sorted = players.sort((a, b) => {
+      const aIndex = submitted.indexOf(a);
+      const bIndex = submitted.indexOf(b);
+
+      if (aIndex === -1) {
+        return 1;
+      }
+
+      if (bIndex === -1) {
+        return -1;
+      }
+
+      return aIndex - bIndex;
+    });
+
+    return sorted;
+  }, [party]);
+
   return (
     <div className="w-full h-full flex items-center justify-center p-4">
       <div className="h-full flex flex-col items-center justify-between gap-4">
@@ -58,9 +90,9 @@ const PartyOwner = () => {
           <div className="h-full w-full overflow-y-auto flex flex-col items-center gap-4">
             <div className="h-4" />
 
-            {party && party.players.length > 0 ? (
-              party.players.map((name) => {
-                const hasSubmitted = party.submitted.indexOf(name);
+            {ranks.length > 0 ? (
+              ranks.map((name) => {
+                const hasSubmitted = party!.submitted.indexOf(name);
 
                 return (
                   <div
