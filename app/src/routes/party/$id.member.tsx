@@ -6,7 +6,7 @@ import {
   useSearch,
 } from "@tanstack/react-router";
 import { Share2 } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { z } from "zod";
 import { api } from "../../lib/api";
 
@@ -65,6 +65,26 @@ const Party = () => {
       onSuccess: (data) => setRank(data.rank),
     });
   }, [buzz]);
+
+  const { mutateAsync: leave } = useMutation({
+    mutationKey: ["party", id, "leave"],
+    mutationFn: async () => {
+      const response = await api.party[":id"][":name"].$delete({
+        param: { id, name },
+      });
+
+      return await response.json();
+    },
+  });
+
+  // Listen for page close to remove the player from the party
+  useEffect(() => {
+    const onUnload = async () => await leave();
+
+    window.addEventListener("beforeunload", onUnload);
+
+    return () => window.removeEventListener("beforeunload", onUnload);
+  }, [leave]);
 
   // Share the party
   const onShare = useCallback(

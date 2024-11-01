@@ -3,7 +3,11 @@ import { logger } from "hono/logger";
 import { cors } from "hono/cors";
 import { nanoid } from "nanoid";
 import { zValidator } from "@hono/zod-validator";
-import { party_body, party_params } from "./schemas";
+import {
+  party_body,
+  party_params,
+  remove_party_player_params,
+} from "./schemas";
 
 type Party = {
   players: string[];
@@ -140,7 +144,28 @@ const app = new Hono()
     parties[id].updated_at = Date.now();
 
     return c.json({ id });
-  });
+  })
+  .delete(
+    "/party/:id/:name",
+    zValidator("param", remove_party_player_params),
+    async (c) => {
+      const { id, name } = c.req.valid("param");
+
+      // Ensure the party exists
+      if (!parties[id]) {
+        return c.json({ error: "Party not found" }, 404);
+      }
+
+      // Remove the player from the party
+      parties[id].players = parties[id].players.filter((n) => n !== name);
+      parties[id].submitted = parties[id].submitted.filter((n) => n !== name);
+
+      // Update the party's timestamp
+      parties[id].updated_at = Date.now();
+
+      return c.json({ id });
+    }
+  );
 
 // Clean up the parties every 15 minutes if they are older than 1 hour
 setInterval(() => {
