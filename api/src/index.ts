@@ -6,7 +6,6 @@ import { zValidator } from "@hono/zod-validator";
 import { party_body, party_params } from "./schemas";
 
 type Party = {
-  owner: string;
   players: string[];
   submitted: string[];
   created_at: number;
@@ -24,6 +23,8 @@ const names = [
   "Anne Emone",
   "Alain Terieur",
   "Mo Bylette",
+  "Sarah Croche",
+  "Sarah Pelle",
 ];
 
 // Store the parties in memory
@@ -40,22 +41,18 @@ const app = new Hono()
     // Ensure the id is unique
     while (parties[id]) id = nanoid(5);
 
-    // Pick a random name
-    const name = names[Math.floor(Math.random() * names.length)];
-
     // Get the current timestamp
     const now = Date.now();
 
     // Create the party
     parties[id] = {
-      owner: name,
-      players: [name],
+      players: [],
       submitted: [],
       created_at: now,
       updated_at: now,
     };
 
-    return c.json({ id, name }, 201);
+    return c.json({ id }, 201);
   })
   .get("/party/:id", zValidator("param", party_params), async (c) => {
     const { id } = c.req.valid("param");
@@ -67,7 +64,6 @@ const app = new Hono()
 
     return c.json({
       id,
-      owner: parties[id].owner,
       players: parties[id].players,
       submitted: parties[id].submitted,
     });

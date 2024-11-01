@@ -3,6 +3,7 @@ WORKDIR /app
 COPY . .
 RUN bun i
 
+ENV VITE_APP_URL=https://buzzer.clubs-isen.fr
 ENV VITE_API_URL=https://buzzapi.clubs-isen.fr
 
 RUN bun run build

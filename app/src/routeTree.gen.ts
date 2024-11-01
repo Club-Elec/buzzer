@@ -14,7 +14,8 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as PartyNewImport } from './routes/party/new'
-import { Route as PartyIdImport } from './routes/party/$id'
+import { Route as PartyIdOwnerImport } from './routes/party/$id.owner'
+import { Route as PartyIdMemberImport } from './routes/party/$id.member'
 
 // Create Virtual Routes
 
@@ -34,9 +35,15 @@ const PartyNewRoute = PartyNewImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const PartyIdRoute = PartyIdImport.update({
-  id: '/party/$id',
-  path: '/party/$id',
+const PartyIdOwnerRoute = PartyIdOwnerImport.update({
+  id: '/party/$id/owner',
+  path: '/party/$id/owner',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PartyIdMemberRoute = PartyIdMemberImport.update({
+  id: '/party/$id/member',
+  path: '/party/$id/member',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -51,18 +58,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexLazyImport
       parentRoute: typeof rootRoute
     }
-    '/party/$id': {
-      id: '/party/$id'
-      path: '/party/$id'
-      fullPath: '/party/$id'
-      preLoaderRoute: typeof PartyIdImport
-      parentRoute: typeof rootRoute
-    }
     '/party/new': {
       id: '/party/new'
       path: '/party/new'
       fullPath: '/party/new'
       preLoaderRoute: typeof PartyNewImport
+      parentRoute: typeof rootRoute
+    }
+    '/party/$id/member': {
+      id: '/party/$id/member'
+      path: '/party/$id/member'
+      fullPath: '/party/$id/member'
+      preLoaderRoute: typeof PartyIdMemberImport
+      parentRoute: typeof rootRoute
+    }
+    '/party/$id/owner': {
+      id: '/party/$id/owner'
+      path: '/party/$id/owner'
+      fullPath: '/party/$id/owner'
+      preLoaderRoute: typeof PartyIdOwnerImport
       parentRoute: typeof rootRoute
     }
   }
@@ -72,42 +86,47 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
-  '/party/$id': typeof PartyIdRoute
   '/party/new': typeof PartyNewRoute
+  '/party/$id/member': typeof PartyIdMemberRoute
+  '/party/$id/owner': typeof PartyIdOwnerRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
-  '/party/$id': typeof PartyIdRoute
   '/party/new': typeof PartyNewRoute
+  '/party/$id/member': typeof PartyIdMemberRoute
+  '/party/$id/owner': typeof PartyIdOwnerRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
-  '/party/$id': typeof PartyIdRoute
   '/party/new': typeof PartyNewRoute
+  '/party/$id/member': typeof PartyIdMemberRoute
+  '/party/$id/owner': typeof PartyIdOwnerRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/party/$id' | '/party/new'
+  fullPaths: '/' | '/party/new' | '/party/$id/member' | '/party/$id/owner'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/party/$id' | '/party/new'
-  id: '__root__' | '/' | '/party/$id' | '/party/new'
+  to: '/' | '/party/new' | '/party/$id/member' | '/party/$id/owner'
+  id: '__root__' | '/' | '/party/new' | '/party/$id/member' | '/party/$id/owner'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
-  PartyIdRoute: typeof PartyIdRoute
   PartyNewRoute: typeof PartyNewRoute
+  PartyIdMemberRoute: typeof PartyIdMemberRoute
+  PartyIdOwnerRoute: typeof PartyIdOwnerRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
-  PartyIdRoute: PartyIdRoute,
   PartyNewRoute: PartyNewRoute,
+  PartyIdMemberRoute: PartyIdMemberRoute,
+  PartyIdOwnerRoute: PartyIdOwnerRoute,
 }
 
 export const routeTree = rootRoute
@@ -123,18 +142,22 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/party/$id",
-        "/party/new"
+        "/party/new",
+        "/party/$id/member",
+        "/party/$id/owner"
       ]
     },
     "/": {
       "filePath": "index.lazy.tsx"
     },
-    "/party/$id": {
-      "filePath": "party/$id.tsx"
-    },
     "/party/new": {
       "filePath": "party/new.tsx"
+    },
+    "/party/$id/member": {
+      "filePath": "party/$id.member.tsx"
+    },
+    "/party/$id/owner": {
+      "filePath": "party/$id.owner.tsx"
     }
   }
 }

@@ -4,8 +4,8 @@ import { api } from "../../lib/api";
 export const Route = createFileRoute("/party/new")({
   beforeLoad: async () => {
     const response = await api.party.$post();
-    const { id, name } = await response.json();
+    const { id } = await response.json();
 
-    throw redirect({ to: "/party/$id", params: { id }, search: { name } });
+    throw redirect({ to: "/party/$id/owner", params: { id } });
   },
 });

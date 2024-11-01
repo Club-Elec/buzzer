@@ -5,18 +5,19 @@ import {
   useParams,
   useSearch,
 } from "@tanstack/react-router";
-import { RotateCcw, Share2 } from "lucide-react";
+import { Share2 } from "lucide-react";
 import { useCallback, useState } from "react";
 import { z } from "zod";
 import { api } from "../../lib/api";
 
 const Party = () => {
-  const { id } = useParams({ from: "/party/$id" });
-  const { name } = useSearch({ from: "/party/$id" }) as { name: string };
+  const { id } = useParams({ from: "/party/$id/member" });
+  const { name } = useSearch({ from: "/party/$id/member" }) as { name: string };
 
   const [rank, setRank] = useState<number | null>(null);
 
-  const { data: party } = useQuery({
+  // Fetch the party data from the server with polling to refresh the ranks
+  useQuery({
     queryKey: ["party", id],
     queryFn: async () => {
       const response = await api.party[":id"].$get({ param: { id } });
@@ -53,6 +54,7 @@ const Party = () => {
     },
   });
 
+  // Buzz
   const onClick = useCallback(async () => {
     // Play the sound
     const audio = new Audio("/sounds/bike_horn.mp3");
@@ -64,22 +66,14 @@ const Party = () => {
     });
   }, [buzz]);
 
-  const { mutateAsync: reset } = useMutation({
-    mutationKey: ["party", id, "reset"],
-    mutationFn: async () => {
-      const response = await api.party[":id"].reset.$post({ param: { id } });
-
-      return await response.json();
-    },
-  });
-
-  const onReset = useCallback(async () => {
-    await reset();
-  }, [reset]);
-
-  const onShare = useCallback(async () => {
-    await navigator.share({ url: `http://localhost:3000/party/${id}` });
-  }, [id]);
+  // Share the party
+  const onShare = useCallback(
+    async () =>
+      await navigator.share({
+        url: `${import.meta.env.VITE_APP_URL}/party/${id}/member`,
+      }),
+    [id]
+  );
 
   return (
     <div className="w-full h-full flex items-center justify-center p-4">
@@ -109,15 +103,6 @@ const Party = () => {
               <span className="font-bold">{id}</span>
               <Share2 className="text-red-600 ml-3" />
             </button>
-
-            {party?.owner === name ? (
-              <button
-                className="h-16 aspect-square flex items-center justify-center p-4 border border-red-400 bg-red-100 rounded-2xl shadow-xl shadow-red-200 text-lg font-semibold active:scale-95 transition ease-in-out duration-300"
-                onClick={onReset}
-              >
-                <RotateCcw className="text-red-600" />
-              </button>
-            ) : null}
           </div>
 
           {rank ? (
@@ -138,7 +123,7 @@ const Party = () => {
 
 const party_query = z.object({ name: z.string() });
 
-export const Route = createFileRoute("/party/$id")({
+export const Route = createFileRoute("/party/$id/member")({
   component: Party,
   beforeLoad: async (c) => {
     const { id } = c.params;
@@ -175,7 +160,11 @@ export const Route = createFileRoute("/party/$id")({
     const { name } = await response.json();
 
     // Redirect to the party with the name
-    throw redirect({ to: "/party/$id", params: { id }, search: { name } });
+    throw redirect({
+      to: "/party/$id/member",
+      params: { id },
+      search: { name },
+    });
   },
   validateSearch: (s) => party_query.parse(s),
 });
