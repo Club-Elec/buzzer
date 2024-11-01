@@ -79,11 +79,20 @@ const Party = () => {
 
   // Listen for page close to remove the player from the party
   useEffect(() => {
-    const onUnload = async () => await leave();
+    const onChange = async () => {
+      if (document.visibilityState === "visible") {
+        // reload the page
+        window.location.reload();
 
-    window.addEventListener("beforeunload", onUnload);
+        return;
+      }
 
-    return () => window.removeEventListener("beforeunload", onUnload);
+      await leave();
+    };
+
+    window.addEventListener("visibilitychange", onChange);
+
+    return () => window.removeEventListener("visibilitychange", onChange);
   }, [leave]);
 
   // Share the party
