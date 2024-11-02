@@ -1,4 +1,5 @@
 FROM oven/bun as builder
+LABEL stage=builder
 
 # Create a build directory
 WORKDIR /build

@@ -1,4 +1,5 @@
 FROM oven/bun as builder
+LABEL stage=builder
 WORKDIR /app
 COPY . .
 RUN bun install --production
