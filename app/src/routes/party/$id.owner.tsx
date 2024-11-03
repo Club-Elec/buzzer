@@ -3,6 +3,7 @@ import { createFileRoute, useParams } from "@tanstack/react-router";
 import { RotateCcw, Share2 } from "lucide-react";
 import { useCallback, useMemo } from "react";
 import { api } from "../../lib/api";
+import { QRCodeSVG } from "qrcode.react";
 
 const PartyOwner = () => {
   const { id } = useParams({ from: "/party/$id/owner" });
@@ -136,6 +137,11 @@ const PartyOwner = () => {
             <span className="font-bold">{id}</span>
             <Share2 className="text-blue-600 ml-4" />
           </button>
+
+          <QRCodeSVG
+            title="Buzz Ta Mère - Rejoindre la partie"
+            value={`${import.meta.env.VITE_APP_URL}/party/${id}/member`}
+          />
         </div>
       </div>
     </div>
