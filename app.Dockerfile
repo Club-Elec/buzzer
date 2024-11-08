@@ -19,6 +19,7 @@ WORKDIR /build/app
 # Install the dependencies
 RUN bun i
 
+ENV VITE_APP_NAME=Buzz's ISEN
 ENV VITE_APP_URL=https://buzzer.clubs-isen.fr
 ENV VITE_API_URL=https://buzzapi.clubs-isen.fr
 

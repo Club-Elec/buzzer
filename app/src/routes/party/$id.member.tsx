@@ -1,3 +1,5 @@
+import { ContactShadows } from "@react-three/drei";
+import { Canvas } from "@react-three/fiber";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   createFileRoute,
@@ -7,8 +9,9 @@ import {
 } from "@tanstack/react-router";
 import { Share2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { z } from "zod";
+import Button from "../../components/ui/Button";
 import { api } from "../../lib/api";
+import Buzzer from "../../models/Buzzer";
 
 const Party = () => {
   const { id } = useParams({ from: "/party/$id/member" });
@@ -50,7 +53,11 @@ const Party = () => {
         throw new Error("Failed to buzz");
       }
 
-      return await response.json();
+      const data = await response.json();
+
+      setRank(data.rank);
+
+      return data;
     },
   });
 
@@ -61,9 +68,7 @@ const Party = () => {
     audio.play();
 
     // Buzz the party
-    await buzz(undefined, {
-      onSuccess: (data) => setRank(data.rank),
-    });
+    await buzz(undefined);
   }, [buzz]);
 
   const { mutateAsync: leave } = useMutation({
@@ -105,42 +110,74 @@ const Party = () => {
   );
 
   return (
-    <div className="w-full h-full flex items-center justify-center p-4">
-      <div className="h-full flex flex-col items-center justify-between gap-4">
-        <h1 className="text-5xl text-blue-950 font-bold">Buzz Ta Mère</h1>
+    <div className="w-full h-full flex flex-col gap-4 p-4 justify-between overflow-y-hidden">
+      <div className="flex justify-center md:justify-start">
+        <h1 className="text-5xl text-red-900 font-['Poppins'] font-bold">
+          {import.meta.env.VITE_APP_NAME}
+        </h1>
+      </div>
 
-        <div className="w-96 aspect-square flex items-center justify-center rounded-full border-blue-400 bg-blue-100">
-          <img
-            src="/skins/bud_button.png"
-            className="w-full h-full active:scale-90 transition ease-in-out duration-300"
-            onClick={onClick}
-          />
+      <div className="w-auto flex justify-center flex-grow-0 overflow-hidden">
+        <div className="w-[90%] max-w-[48rem] aspect-square max-h-[70vh]">
+          <Canvas shadows camera={{ position: [0, 3, 0] }}>
+            <ambientLight intensity={0.2} />
+            <directionalLight
+              position={[-10, 5, -5]}
+              intensity={1}
+              color="red"
+            />
+            <directionalLight
+              position={[10, 2, 5]}
+              intensity={2}
+              color="#0c8cbf"
+            />
+
+            <spotLight
+              position={[6, 1, 5]}
+              intensity={2.5}
+              penumbra={1}
+              angle={0.35}
+              castShadow
+              color="#0c8cbf"
+            />
+
+            <Buzzer onClick={onClick} />
+
+            <ContactShadows
+              blur={1.5}
+              position-y={-0.49}
+              scale={10}
+              color={"#444"}
+            />
+          </Canvas>
         </div>
+      </div>
 
-        <div className="w-[80%] flex flex-col items-center gap-2">
-          <button className="w-full h-16 flex items-center px-4 py-2 border border-blue-200 bg-blue-50 rounded-2xl shadow-md shadow-blue-100 text-lg font-semibold active:scale-95 transition ease-in-out duration-300">
-            Vous êtes &nbsp;
-            <span className="font-bold">{name}</span>&nbsp;!
-          </button>
+      <div className="w-full flex flex-col md:grid md:grid-cols-2 gap-4 p-4">
+        <Button className="w-full flex items-center">
+          Vous êtes &nbsp;
+          <span className="font-bold">{name}</span>&nbsp;!
+        </Button>
+        <Button
+          variant="secondary"
+          className="flex justify-between items-center"
+          onClick={onShare}
+        >
+          <div className="flex items-center">
+            Rejoindre avec&nbsp;
+            <span className="font-bold">{id}</span>
+          </div>
+          <Share2 className="text-red-600 ml-3" />
+        </Button>
 
-          <button
-            className="w-full h-16 flex justify-between items-center px-4 py-2 border border-blue-400 bg-blue-100 rounded-2xl shadow-xl shadow-blue-200 text-lg font-semibold active:scale-95 transition ease-in-out duration-300"
-            onClick={onShare}
-          >
-            <div className="flex items-center">
-              Rejoindre avec&nbsp;
-              <span className="font-bold">{id}</span>
-            </div>
-            <Share2 className="text-blue-600 ml-3" />
-          </button>
-
+        <div className="w-full flex justify-center md:col-span-2">
           {rank ? (
-            <p className="text-sm text-center mt-2">
+            <p className="text-red-100 text-sm">
               Vous avez appuyé en&nbsp;<span className="font-bold">{rank}</span>
               &nbsp;!
             </p>
           ) : (
-            <p className="text-sm text-center mt-2">
+            <p className="text-red-100 text-sm">
               Vous devez appuyer sur le bouton pour gagner !
             </p>
           )}
@@ -149,8 +186,6 @@ const Party = () => {
     </div>
   );
 };
-
-const party_query = z.object({ name: z.string() });
 
 export const Route = createFileRoute("/party/$id/member")({
   component: Party,
@@ -195,5 +230,4 @@ export const Route = createFileRoute("/party/$id/member")({
       search: { name },
     });
   },
-  validateSearch: (s) => party_query.parse(s),
 });
