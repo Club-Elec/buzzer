@@ -145,8 +145,8 @@ const app = new Hono()
 
     return c.json({ id });
   })
-  .delete(
-    "/party/:id/:name",
+  .post(
+    "/party/:id/:name/leave",
     zValidator("param", remove_party_player_params),
     async (c) => {
       const { id, name } = c.req.valid("param");

@@ -33,7 +33,7 @@ const Party = () => {
 
       // Reset the rank if no players have submitted
       if (data.submitted.length === 0) {
-        setRank(0);
+        setRank(null);
       }
 
       return data;
@@ -73,13 +73,10 @@ const Party = () => {
 
   const { mutateAsync: leave } = useMutation({
     mutationKey: ["party", id, "leave"],
-    mutationFn: async () => {
-      const response = await api.party[":id"][":name"].$delete({
-        param: { id, name },
-      });
-
-      return await response.json();
-    },
+    mutationFn: async () =>
+      navigator.sendBeacon(
+        api.party[":id"][":name"].leave.$url({ param: { id, name } })
+      ),
   });
 
   // Listen for page close to remove the player from the party
@@ -123,13 +120,13 @@ const Party = () => {
             <ambientLight intensity={0.2} />
             <directionalLight
               position={[-10, 5, -5]}
-              intensity={1}
-              color="red"
+              intensity={rank !== null ? 10 : 1}
+              color={rank !== null ? "green" : "red"}
             />
             <directionalLight
               position={[10, 2, 5]}
               intensity={2}
-              color="#0c8cbf"
+              color={rank !== null ? "green" : "#0c8cbf"}
             />
 
             <spotLight
@@ -138,7 +135,7 @@ const Party = () => {
               penumbra={1}
               angle={0.35}
               castShadow
-              color="#0c8cbf"
+              color={rank !== null ? "green" : "#0c8cbf"}
             />
 
             <Buzzer onClick={onClick} />
