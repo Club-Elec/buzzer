@@ -81,6 +81,7 @@ const Party = () => {
     async (sound: AvailableSound) => {
       // Play the sound
       play(sound);
+      console.log("buzzed");
 
       // Buzz the party
       await buzz(undefined);
@@ -155,7 +156,12 @@ const Party = () => {
               color={rank !== null ? "green" : "#0c8cbf"}
             />
 
-            <Buzzer onClick={() => onClick(sound)} />
+            <Buzzer
+              onClick={(e) => {
+                e.stopPropagation();
+                onClick(sound);
+              }}
+            />
 
             <ContactShadows
               blur={1.5}
@@ -176,10 +182,11 @@ const Party = () => {
         <div className="flex items-center gap-2">
           <Button
             variant="secondary"
-            className="flex-none flex justify-center items-center aspect-square"
+            className="flex-none flex justify-center items-center aspect-square sm:aspect-auto"
             onClick={() => soundDialogRef.current?.showModal()}
           >
             <Music className="text-red-600" />
+            <p className="ml-3 hidden sm:block">Personnaliser</p>
           </Button>
 
           <Button
@@ -220,10 +227,9 @@ const Party = () => {
 
             <div className="flex flex-col gap-2">
               {available_sounds.map((name) => (
-                <div className="w-full flex gap-2">
+                <div className="w-full flex gap-2" key={name}>
                   <Button
                     className="flex-1 flex items-center gap-4"
-                    key={name}
                     onClick={() => play(name)}
                   >
                     <Play className="w-6 h-6" />
