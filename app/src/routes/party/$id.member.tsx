@@ -7,17 +7,25 @@ import {
   useParams,
   useSearch,
 } from "@tanstack/react-router";
-import { Share2 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { Check, Music, Play, Share2 } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Button from "../../components/ui/Button";
 import { api } from "../../lib/api";
 import Buzzer from "../../models/Buzzer";
+import { available_sounds, AvailableSound } from "../../lib/constants";
 
 const Party = () => {
   const { id } = useParams({ from: "/party/$id/member" });
   const { name } = useSearch({ from: "/party/$id/member" }) as { name: string };
 
+  // The picked sound name
+  const [sound, setSound] = useState<AvailableSound>("Vélo.mp3");
+
+  // The player rank when they buzz
   const [rank, setRank] = useState<number | null>(null);
+
+  // The sound dialog ref
+  const soundDialogRef = useRef<HTMLDialogElement>(null);
 
   // Fetch the party data from the server with polling to refresh the ranks
   useQuery({
@@ -61,15 +69,24 @@ const Party = () => {
     },
   });
 
-  // Buzz
-  const onClick = useCallback(async () => {
+  // Play sound
+  const play = useCallback(async (sound: AvailableSound) => {
     // Play the sound
-    const audio = new Audio("/sounds/bike_horn.mp3");
+    const audio = new Audio(`/sounds/${sound}`);
     audio.play();
+  }, []);
 
-    // Buzz the party
-    await buzz(undefined);
-  }, [buzz]);
+  // Buzz
+  const onClick = useCallback(
+    async (sound: AvailableSound) => {
+      // Play the sound
+      play(sound);
+
+      // Buzz the party
+      await buzz(undefined);
+    },
+    [play, buzz]
+  );
 
   const { mutateAsync: leave } = useMutation({
     mutationKey: ["party", id, "leave"],
@@ -138,7 +155,7 @@ const Party = () => {
               color={rank !== null ? "green" : "#0c8cbf"}
             />
 
-            <Buzzer onClick={onClick} />
+            <Buzzer onClick={() => onClick(sound)} />
 
             <ContactShadows
               blur={1.5}
@@ -155,17 +172,28 @@ const Party = () => {
           Vous êtes &nbsp;
           <span className="font-bold">{name}</span>&nbsp;!
         </Button>
-        <Button
-          variant="secondary"
-          className="flex justify-between items-center"
-          onClick={onShare}
-        >
-          <div className="flex items-center">
-            Rejoindre avec&nbsp;
-            <span className="font-bold">{id}</span>
-          </div>
-          <Share2 className="text-red-600 ml-3" />
-        </Button>
+
+        <div className="flex items-center gap-2">
+          <Button
+            variant="secondary"
+            className="flex-none flex justify-center items-center aspect-square"
+            onClick={() => soundDialogRef.current?.showModal()}
+          >
+            <Music className="text-red-600" />
+          </Button>
+
+          <Button
+            variant="secondary"
+            className="flex-1 flex justify-between items-center"
+            onClick={onShare}
+          >
+            <div className="flex items-center">
+              Rejoindre avec&nbsp;
+              <span className="font-bold">{id}</span>
+            </div>
+            <Share2 className="text-red-600 ml-3" />
+          </Button>
+        </div>
 
         <div className="w-full flex justify-center md:col-span-2">
           {rank ? (
@@ -179,6 +207,48 @@ const Party = () => {
             </p>
           )}
         </div>
+
+        {/* Sound picker dialog */}
+        <dialog
+          ref={soundDialogRef}
+          className="modal modal-bottom sm:modal-middle"
+        >
+          <div className="modal-box flex flex-col gap-4 bg-zinc-800">
+            <h2 className="text-red-50 font-semibold text-2xl">
+              Choisir un bruit
+            </h2>
+
+            <div className="flex flex-col gap-2">
+              {available_sounds.map((name) => (
+                <div className="w-full flex gap-2">
+                  <Button
+                    className="flex-1 flex items-center gap-4"
+                    key={name}
+                    onClick={() => play(name)}
+                  >
+                    <Play className="w-6 h-6" />
+
+                    {name.split(".")[0]}
+                  </Button>
+
+                  <Button
+                    className="flex-none flex items-center justify-center aspect-square"
+                    onClick={() => {
+                      setSound(name);
+                      soundDialogRef.current?.close();
+                    }}
+                  >
+                    <Check className="w-6 h-6" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <form method="dialog" className="modal-backdrop">
+            <button>close</button>
+          </form>
+        </dialog>
       </div>
     </div>
   );
