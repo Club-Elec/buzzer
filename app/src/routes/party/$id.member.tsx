@@ -11,8 +11,8 @@ import { Check, Music, Play, Share2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Button from "../../components/ui/Button";
 import { api } from "../../lib/api";
-import Buzzer from "../../models/Buzzer";
 import { available_sounds, AvailableSound } from "../../lib/constants";
+import Buzzer from "../../models/Buzzer";
 
 const Party = () => {
   const { id } = useParams({ from: "/party/$id/member" });
@@ -264,32 +264,41 @@ export const Route = createFileRoute("/party/$id/member")({
   beforeLoad: async (c) => {
     const { id } = c.params;
 
+    let exists: Response;
+
+    // The request can fail, so we need to catch it
     try {
       // Check if the party exists
-      const exists = await api.party[":id"].$get({ param: { id } });
-
-      // If the party does not exist, redirect to the home page
-      if (exists.status === 404) {
-        throw redirect({ to: "/", search: { notFound: true } });
-      }
-
-      // Get the players of the party
-      const { players } = await exists.json();
-
-      // Check if the player is in the party based on the name
-      if (
-        c.search &&
-        (c.search as { name?: string }).name &&
-        players.includes((c.search as { name: string }).name)
-      ) {
-        return;
-      }
+      exists = await api.party[":id"].$get({ param: { id } });
     } catch (_) {
       throw redirect({ to: "/", search: { unknown: true } });
     }
 
+    // If the party does not exist, redirect to the home page
+    if (exists.status === 404) {
+      throw redirect({ to: "/", search: { notFound: true } });
+    }
+
+    // Get the players of the party
+    const { players } = await exists.json();
+
+    // Check if the player is in the party based on the name
+    if (
+      c.search &&
+      (c.search as { name?: string }).name &&
+      players.includes((c.search as { name: string }).name)
+    ) {
+      return;
+    }
+
     // Join the party
-    const response = await api.party[":id"].$post({ param: { id } });
+    let response: Response;
+
+    try {
+      response = await api.party[":id"].$post({ param: { id } });
+    } catch (_) {
+      throw redirect({ to: "/", search: { unknown: true } });
+    }
 
     // If the request fails, redirect to the home page
     if (!response.ok) {
