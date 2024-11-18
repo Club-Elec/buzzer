@@ -81,7 +81,6 @@ const Party = () => {
     async (sound: AvailableSound) => {
       // Play the sound
       play(sound);
-      console.log("buzzed");
 
       // Buzz the party
       await buzz(undefined);
@@ -265,24 +264,28 @@ export const Route = createFileRoute("/party/$id/member")({
   beforeLoad: async (c) => {
     const { id } = c.params;
 
-    // Check if the party exists
-    const exists = await api.party[":id"].$get({ param: { id } });
+    try {
+      // Check if the party exists
+      const exists = await api.party[":id"].$get({ param: { id } });
 
-    // If the party does not exist, redirect to the home page
-    if (exists.status === 404) {
-      throw redirect({ to: "/" });
-    }
+      // If the party does not exist, redirect to the home page
+      if (exists.status === 404) {
+        throw redirect({ to: "/", search: { notFound: true } });
+      }
 
-    // Get the players of the party
-    const { players } = await exists.json();
+      // Get the players of the party
+      const { players } = await exists.json();
 
-    // Check if the player is in the party based on the name
-    if (
-      c.search &&
-      (c.search as { name?: string }).name &&
-      players.includes((c.search as { name: string }).name)
-    ) {
-      return;
+      // Check if the player is in the party based on the name
+      if (
+        c.search &&
+        (c.search as { name?: string }).name &&
+        players.includes((c.search as { name: string }).name)
+      ) {
+        return;
+      }
+    } catch (_) {
+      throw redirect({ to: "/", search: { unknown: true } });
     }
 
     // Join the party
@@ -290,7 +293,7 @@ export const Route = createFileRoute("/party/$id/member")({
 
     // If the request fails, redirect to the home page
     if (!response.ok) {
-      throw redirect({ to: "/" });
+      throw redirect({ to: "/", search: { unjoinable: true } });
     }
 
     // Get the name of the player

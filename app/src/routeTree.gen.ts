@@ -13,21 +13,21 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as IndexImport } from './routes/index'
 import { Route as PartyNewImport } from './routes/party/new'
 import { Route as PartyIdMemberImport } from './routes/party/$id.member'
 
 // Create Virtual Routes
 
-const IndexLazyImport = createFileRoute('/')()
 const PartyIdOwnerLazyImport = createFileRoute('/party/$id/owner')()
 
 // Create/Update Routes
 
-const IndexLazyRoute = IndexLazyImport.update({
+const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+} as any)
 
 const PartyNewRoute = PartyNewImport.update({
   id: '/party/new',
@@ -57,7 +57,7 @@ declare module '@tanstack/react-router' {
       id: '/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexLazyImport
+      preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
     '/party/new': {
@@ -87,14 +87,14 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexLazyRoute
+  '/': typeof IndexRoute
   '/party/new': typeof PartyNewRoute
   '/party/$id/member': typeof PartyIdMemberRoute
   '/party/$id/owner': typeof PartyIdOwnerLazyRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexLazyRoute
+  '/': typeof IndexRoute
   '/party/new': typeof PartyNewRoute
   '/party/$id/member': typeof PartyIdMemberRoute
   '/party/$id/owner': typeof PartyIdOwnerLazyRoute
@@ -102,7 +102,7 @@ export interface FileRoutesByTo {
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/': typeof IndexLazyRoute
+  '/': typeof IndexRoute
   '/party/new': typeof PartyNewRoute
   '/party/$id/member': typeof PartyIdMemberRoute
   '/party/$id/owner': typeof PartyIdOwnerLazyRoute
@@ -118,14 +118,14 @@ export interface FileRouteTypes {
 }
 
 export interface RootRouteChildren {
-  IndexLazyRoute: typeof IndexLazyRoute
+  IndexRoute: typeof IndexRoute
   PartyNewRoute: typeof PartyNewRoute
   PartyIdMemberRoute: typeof PartyIdMemberRoute
   PartyIdOwnerLazyRoute: typeof PartyIdOwnerLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexLazyRoute: IndexLazyRoute,
+  IndexRoute: IndexRoute,
   PartyNewRoute: PartyNewRoute,
   PartyIdMemberRoute: PartyIdMemberRoute,
   PartyIdOwnerLazyRoute: PartyIdOwnerLazyRoute,
@@ -150,7 +150,7 @@ export const routeTree = rootRoute
       ]
     },
     "/": {
-      "filePath": "index.lazy.tsx"
+      "filePath": "index.tsx"
     },
     "/party/new": {
       "filePath": "party/new.tsx"
