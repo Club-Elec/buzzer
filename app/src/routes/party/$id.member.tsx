@@ -219,7 +219,7 @@ const Party = () => {
           ref={soundDialogRef}
           className="modal modal-bottom sm:modal-middle"
         >
-          <div className="modal-box flex flex-col gap-4 bg-zinc-800 overflow-y-hidden">
+          <div className="max-h-[70%] modal-box flex flex-col gap-4 bg-zinc-800 overflow-y-hidden">
             <h2 className="text-red-50 font-semibold text-2xl">
               Choisir un bruit
             </h2>
