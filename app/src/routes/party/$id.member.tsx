@@ -219,14 +219,17 @@ const Party = () => {
           ref={soundDialogRef}
           className="modal modal-bottom sm:modal-middle"
         >
-          <div className="modal-box flex flex-col gap-4 bg-zinc-800">
+          <div className="modal-box flex flex-col gap-4 bg-zinc-800 overflow-y-hidden">
             <h2 className="text-red-50 font-semibold text-2xl">
               Choisir un bruit
             </h2>
 
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 snap-y snap-proximity overflow-y-auto">
+              {/** some paddings */}
+              <span className="h-4" />
+
               {available_sounds.map((name) => (
-                <div className="w-full flex gap-2" key={name}>
+                <div className="w-full flex gap-2 snap-center" key={name}>
                   <Button
                     className="flex-1 flex items-center gap-4"
                     onClick={() => play(name)}
@@ -247,6 +250,9 @@ const Party = () => {
                   </Button>
                 </div>
               ))}
+
+              {/** some paddings */}
+              <span className="h-4" />
             </div>
           </div>
 
